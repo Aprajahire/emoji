@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text → Emojis - Apraj</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 25px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 0;
+        }
+        
+        .option input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        textarea, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #8e2de2;
+            box-shadow: 0 0 0 2px rgba(142, 45, 226, 0.2);
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-contact {
+            background: linear-gradient(to right, #11998e, #38ef7d);
+            margin-top: 15px;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 25px 0;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px dashed #ddd;
+            min-height: 60px;
+            word-break: break-all;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .emoji {
+            font-size: 18px;
+            margin: 0 2px;
+        }
+        
+        .password-note {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .contact-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .success-message {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .creator-name {
+            color: #8e2de2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Text → Emojis</h1>
+            <p class="subtitle">Encrypt your messages with emojis</p>
+        </header>
+        
+        <div class="content">
+            <div class="option">
+                <input type="checkbox" id="encrypt-toggle" checked>
+                <label for="encrypt-toggle">Encrypt Text</label>
+            </div>
+            <div class="option">
+                <input type="checkbox" id="decrypt-toggle">
+                <label for="decrypt-toggle">Decrypt Emojis</label>
+            </div>
+            
+            <div class="input-group">
+                <label for="message">1. Type a message</label>
+                <textarea id="message" placeholder="Hello World or write some javascript code.">Hello World</textarea>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">2. Set a password</label>
+                <input type="password" id="password" placeholder="E.g. 1234">
+                <p class="password-note">Password is required for both encryption and decryption</p>
+            </div>
+            
+            <button class="btn" id="encrypt-btn">3. Encrypt message</button>
+            
+            <div class="divider"></div>
+            
+            <div class="input-group">
+                <label for="result">Encrypted Message</label>
+                <div class="result" id="result">
+                    Your encrypted message will appear here...
+                </div>
+            </div>
+            
+            <button class="btn" id="copy-btn" style="display: none;">Copy to Clipboard</button>
+            
+            <button class="btn btn-contact" id="contact-btn">Contact Apraj</button>
+            
+            <div class="contact-form" id="contact-form">
+                <div class="input-group">
+                    <label for="user-name">Your Name</label>
+                    <input type="text" id="user-name" placeholder="Enter your name">
+                </div>
+                <div class="input-group">
+                    <label for="user-email">Your Email</label>
+                    <input type="email" id="user-email" placeholder="Enter your email">
+                </div>
+                <div class="input-group">
+                    <label for="user-message">Message to Apraj</label>
+                    <textarea id="user-message" placeholder="Type your message here..."></textarea>
+                </div>
+                <button class="btn" id="send-email-btn">Send Message</button>
+            </div>
+            
+            <div class="success-message" id="success-message">
+                Your message has been sent to Apraj!
+            </div>
+        </div>
+        
+        <div class="footer">
+            Crafted with <span class="emoji">🔍</span> by <span class="creator-name">Apraj</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const encryptToggle = document.getElementById('encrypt-toggle');
+            const decryptToggle = document.getElementById('decrypt-toggle');
+            const messageInput = document.getElementById('message');
+            const passwordInput = document.getElementById('password');
+            const encryptBtn = document.getElementById('encrypt-btn');
+            const resultDiv = document.getElementById('result');
+            const copyBtn = document.getElementById('copy-btn');
+            const contactBtn = document.getElementById('contact-btn');
+            const contactForm = document.getElementById('contact-form');
+            const sendEmailBtn = document.getElementById('send-email-btn');
+            const successMessage = document.getElementById('success-message');
+            
+            // Toggle between encrypt and decrypt modes
+            encryptToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    decryptToggle.checked = false;
+                    messageInput.placeholder = "Hello World or write some javascript code.";
+                    encryptBtn.textContent = "3. Encrypt message";
+                    resultDiv.textContent = "Your encrypted message will appear here...";
+                    copyBtn.style.display = 'none';
+                }
+            });
+            
+            decryptToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    encryptToggle.checked = false;
+                    messageInput.placeholder = "Paste your emoji encrypted message here...";
+                    encryptBtn.textContent = "3. Decrypt message";
+                    resultDiv.textContent = "Your decrypted text will appear here...";
+                    copyBtn.style.display = 'none';
+                }
+            });
+            
+            // Encrypt/Decrypt button click
+            encryptBtn.addEventListener('click', function() {
+                const message = messageInput.value.trim();
+                const password = passwordInput.value.trim();
+                
+                if (!message) {
+                    alert("Please enter a message to encrypt/decrypt.");
+                    return;
+                }
+                
+                if (!password) {
+                    alert("Please enter a password.");
+                    return;
+                }
+                
+                if (encryptToggle.checked) {
+                    // Encrypt the message
+                    const encrypted = encryptMessage(message, password);
+                    resultDiv.innerHTML = encrypted;
+                    copyBtn.style.display = 'block';
+                } else {
+                    // Decrypt the message
+                    const decrypted = decryptMessage(message, password);
+                    resultDiv.textContent = decrypted;
+                    copyBtn.style.display = 'block';
+                }
+            });
+            
+            // Copy to clipboard
+            copyBtn.addEventListener('click', function() {
+                const textToCopy = resultDiv.textContent;
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = "Copied!";
+                    setTimeout(function() {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                });
+            });
+            
+            // Contact button
+            contactBtn.addEventListener('click', function() {
+                contactForm.style.display = 'block';
+                successMessage.style.display = 'none';
+            });
+            
+            // Send email button
+            sendEmailBtn.addEventListener('click', function() {
+                const userName = document.getElementById('user-name').value.trim();
+                const userEmail = document.getElementById('user-email').value.trim();
+                const userMessage = document.getElementById('user-message').value.trim();
+                
+                if (!userName || !userEmail || !userMessage) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+                
+                // Email simulation
+                setTimeout(function() {
+                    contactForm.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    
+                    // Reset form
+                    document.getElementById('user-name').value = '';
+                    document.getElementById('user-email').value = '';
+                    document.getElementById('user-message').value = '';
+                    
+                    // Show confirmation
+                    alert(`Thank you ${userName}! Your message has been sent to Apraj. He will respond to ${userEmail} soon.`);
+                }, 1000);
+            });
+            
+            // Encryption functions
+            function encryptMessage(message, password) {
+                const emojiMap = {
+                    'a': '😀', 'b': '😃', 'c': '😄', 'd': '😁', 'e': '😆',
+                    'f': '😅', 'g': '😂', 'h': '🤣', 'i': '😊', 'j': '😇',
+                    'k': '🙂', 'l': '🙃', 'm': '😉', 'n': '😌', 'o': '😍',
+                    'p': '🥰', 'q': '😘', 'r': '😗', 's': '😙', 't': '😚',
+                    'u': '😋', 'v': '😛', 'w': '😝', 'x': '😜', 'y': '🤪',
+                    'z': '🤨', 'A': '🧐', 'B': '🤓', 'C': '😎', 'D': '🤩',
+                    'E': '🥳', 'F': '😏', 'G': '😒', 'H': '😞', 'I': '😔',
+                    'J': '😟', 'K': '😕', 'L': '🙁', 'M': '☹️', 'N': '😣',
+                    'O': '😖', 'P': '😫', 'Q': '😩', 'R': '🥺', 'S': '😢',
+                    'T': '😭', 'U': '😤', 'V': '😠', 'W': '😡', 'X': '🤬',
+                    'Y': '🤯', 'Z': '😳', '0': '🐶', '1': '🐱', '2': '🐭',
+                    '3': '🐹', '4': '🐰', '5': '🦊', '6': '🐻', '7': '🐼',
+                    '8': '🐨', '9': '🐯', ' ': '🌟', '.': '⭐', ',': '✨',
+                    '!': '💫', '?': '🔥', '-': '💥', '_': '⚡', '+': '💦',
+                    '=': '💨', '/': '🐠', '\\': '🐟', '|': '🐡', '(': '🦑',
+                    ')': '🐙', '[': '🦐', ']': '🦞', '{': '🦀', '}': '🐚',
+                    '<': '🐌', '>': '🦋', '@': '🐛', '#': '🐜', '$': '🐝',
+                    '%': '🐞', '^': '🦗', '&': '🕷', '*': '🕸', '"': '🦂',
+                    "'": '🐢', '`': '🐍', '~': '🦎', ':': '🐊', ';': '🐅',
+                };
+                
+                let encrypted = '';
+                for (let i = 0; i < message.length; i++) {
+                    const char = message[i];
+                    if (emojiMap[char]) {
+                        encrypted += emojiMap[char];
+                    } else {
+                        encrypted += char;
+                    }
+                }
+                
+                return scrambleWithPassword(encrypted, password);
+            }
+            
+            function decryptMessage(encryptedMessage, password) {
+                const unscrambled = unscrambleWithPassword(encryptedMessage, password);
+                
+                const emojiMap = {
+                    '😀': 'a', '😃': 'b', '😄': 'c', '😁': 'd', '😆': 'e',
+                    '😅': 'f', '😂': 'g', '🤣': 'h', '😊': 'i', '😇': 'j',
+                    '🙂': 'k', '🙃': 'l', '😉': 'm', '😌': 'n', '😍': 'o',
+                    '🥰': 'p', '😘': 'q', '😗': 'r', '😙': 's', '😚': 't',
+                    '😋': 'u', '😛': 'v', '😝': 'w', '😜': 'x', '🤪': 'y',
+                    '🤨': 'z', '🧐': 'A', '🤓': 'B', '😎': 'C', '🤩': 'D',
+                    '🥳': 'E', '😏': 'F', '😒': 'G', '😞': 'H', '😔': 'I',
+                    '😟': 'J', '😕': 'K', '🙁': 'L', '☹️': 'M', '😣': 'N',
+                    '😖': 'O', '😫': 'P', '😩': 'Q', '🥺': 'R', '😢': 'S',
+                    '😭': 'T', '😤': 'U', '😠': 'V', '😡': 'W', '🤬': 'X',
+                    '🤯': 'Y', '😳': 'Z', '🐶': '0', '🐱': '1', '🐭': '2',
+                    '🐹': '3', '🐰': '4', '🦊': '5', '🐻': '6', '🐼': '7',
+                    '🐨': '8', '🐯': '9', '🌟': ' ', '⭐': '.', '✨': ',',
+                    '💫': '!', '🔥': '?', '💥': '-', '⚡': '_', '💦': '+',
+                    '💨': '=', '🐠': '/', '🐟': '\\', '🐡': '|', '🦑': '(',
+                    '🐙': ')', '🦐': '[', '🦞': ']', '🦀': '{', '🐚': '}',
+                    '🐌': '<', '🦋': '>', '🐛': '@', '🐜': '#', '🐝': '$',
+                    '🐞': '%', '🦗': '^', '🕷': '&', '🕸': '*', '🦂': '"',
+                    '🐢': "'", '🐍': '`', '🦎': '~', '🐊': ':', '🐅': ';',
+                };
+                
+                let decrypted = '';
+                let i = 0;
+                while (i < unscrambled.length) {
+                    let found = false;
+                    
+                    if (i + 1 < unscrambled.length) {
+                        const twoChar = unscrambled.substring(i, i + 2);
+                        if (emojiMap[twoChar]) {
+                            decrypted += emojiMap[twoChar];
+                            i += 2;
+                            found = true;
+                        }
+                    }
+                    
+                    if (!found) {
+                        const char = unscrambled[i];
+                        if (emojiMap[char]) {
+                            decrypted += emojiMap[char];
+                        } else {
+                            decrypted += char;
+                        }
+                        i++;
+                    }
+                }
+                
+                return decrypted;
+            }
+            
+            function scrambleWithPassword(text, password) {
+                let result = '';
+                for (let i = 0; i < text.length; i++) {
+                    const textChar = text.charCodeAt(i);
+                    const passwordChar = password.charCodeAt(i % password.length);
+                    const scrambledChar = String.fromCharCode(textChar + passwordChar % 20);
+                    result += scrambledChar;
+                }
+                return result;
+            }
+            
+            function unscrambleWithPassword(text, password) {
+                let result = '';
+                for (let i = 0; i < text.length; i++) {
+                    const textChar = text.charCodeAt(i);
+                    const passwordChar = password.charCodeAt(i % password.length);
+                    const unscrambledChar = String.fromCharCode(textChar - passwordChar % 20);
+                    result += unscrambledChar;
+                }
+                return result;
+            }
+        });
+    </script>
+</body>
+</html>
